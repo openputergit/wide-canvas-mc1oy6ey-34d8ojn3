@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mera Bharat Yatra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            background-image: linear-gradient(120deg, #f0f4f8 0%, #e9ecef 100%);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #ff6b6b;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .form-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        .form-card:hover {
+            transform: translateY(-5px) rotateX(2deg);
+        }
+        .itinerary-day {
+            border-left: 4px solid #ff6b6b;
+            transition: all 0.3s ease;
+        }
+        .itinerary-day:hover {
+            transform: scale(1.01);
+            background: linear-gradient(to right, #fff5f5, #ffffff);
+        }
+        .activity-card {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .activity-card:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .india-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b6b' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="india-pattern">
+    <!-- Trip Planning Form -->
+    <div id="plannerForm" class="min-h-screen p-4 md:p-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 form-card">
+            <h1 class="text-4xl font-bold text-gray-800 mb-6 flex items-center justify-center">
+                <i class="bi bi-airplane-engines text-[#ff6b6b] mr-3"></i>
+                MERA BHARAT YATRA
+            </h1>
+            
+            <form id="tripForm" class="space-y-6">
+                <!-- Destination and Duration -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-geo-alt mr-1"></i> Destination
+                        </label>
+                        <input type="text" id="destination" placeholder="e.g. Jaipur, Rajasthan" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-calendar-week mr-1"></i> Duration (days)
+                        </label>
+                        <input type="number" id="duration" min="1" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]" required>
+                    </div>
+                </div>
+
+                <!-- Travelers -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-person mr-1"></i> Adults (12+ years)
+                        </label>
+                        <input type="number" id="adults" min="1" value="1" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-person-heart mr-1"></i> Children (2-11 years)
+                        </label>
+                        <input type="number" id="children" min="0" value="0" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-person-arms-up mr-1"></i> Infants (0-2 years)
+                        </label>
+                        <input type="number" id="infants" min="0" value="0" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]">
+                    </div>
+                </div>
+
+                <!-- Dates and Budget -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-calendar-date mr-1"></i> Start Date
+                        </label>
+                        <input type="date" id="startDate" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-cash-stack mr-1"></i> Budget Category
+                        </label>
+                        <select id="budgetCategory" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#ff6b6b]" required>
+                            <option value="economy">Budget Friendly (₹1000-1500/day)</option>
+                            <option value="standard">Comfortable (₹5000-10000/day)</option>
+                            <option value="luxury">Premium (₹10000+/day)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Interests -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="bi bi-heart mr-1"></i> Travel Interests
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Heritage" class="form-checkbox text-[#ff6b6b]">
+                            <span>🏛️ Heritage Sites</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Nature" class="form-checkbox text-[#ff6b6b]">
+                            <span>🌲 Nature & Wildlife</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Adventure" class="form-checkbox text-[#ff6b6b]">
+                            <span>🏃 Adventure Sports</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Food" class="form-checkbox text-[#ff6b6b]">
+                            <span>🍽️ Local Cuisine</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Shopping" class="form-checkbox text-[#ff6b6b]">
+                            <span>🛍️ Shopping</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Spiritual" class="form-checkbox text-[#ff6b6b]">
+                            <span>🕉️ Spiritual</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Art" class="form-checkbox text-[#ff6b6b]">
+                            <span>🎨 Art & Culture</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="interests" value="Photography" class="form-checkbox text-[#ff6b6b]">
+                            <span>📸 Photography</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-[#ff6b6b] text-white py-3 rounded-lg hover:bg-[#ff5252] transition duration-300 flex items-center justify-center">
+                    <i class="bi bi-magic mr-2"></i> Create My Yatra Plan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generated Itinerary -->
+    <div id="itineraryResult" class="min-h-screen p-4 md:p-8 hidden">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                    <i class="bi bi-map text-[#ff6b6b] mr-3"></i>
+                    Your Yatra Plan
+                </h2>
+                <button onclick="showPlannerForm()" class="text-[#ff6b6b] hover:text-[#ff5252] flex items-center">
+                    <i class="bi bi-arrow-left mr-1"></i> Back
+                </button>
+            </div>
+            
+            <div id="loadingSpinner" class="flex justify-center items-center py-12 hidden">
+                <div class="loader"></div>
+            </div>
+
+            <div id="itineraryContent" class="space-y-6">
+                <!-- Itinerary will be populated here -->
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <button onclick="customizeItinerary()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center">
+                    <i class="bi bi-pencil mr-2"></i> Customize Yatra Plan
+                </button>
+                <button onclick="saveItinerary()" class="w-full bg-[#ff6b6b] text-white py-3 rounded-lg hover:bg-[#ff5252] transition duration-300 flex items-center justify-center">
+                    <i class="bi bi-file-pdf mr-2"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentItinerary = null;
+        const userId = localStorage.getItem('userId') || `user-${Date.now()}`;
+        if (!localStorage.getItem('userId')) {
+            localStorage.setItem('userId', userId);
+        }
+
+        document.getElementById('tripForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const destination = document.getElementById('destination').value;
+            const duration = document.getElementById('duration').value;
+            const adults = document.getElementById('adults').value;
+            const children = document.getElementById('children').value;
+            const infants = document.getElementById('infants').value;
+            const startDate = document.getElementById('startDate').value;
+            const budgetCategory = document.getElementById('budgetCategory').value;
+            const interests = Array.from(document.getElementsByName('interests'))
+                                 .filter(checkbox => checkbox.checked)
+                                 .map(checkbox => checkbox.value);
+
+            document.getElementById('plannerForm').classList.add('hidden');
+            document.getElementById('itineraryResult').classList.remove('hidden');
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+            document.getElementById('itineraryContent').innerHTML = '';
+
+            try {
+                const aiResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer Tlv0OQcRm5facwZp1ZA4pygCFRk1',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [{
+                            role: 'user',
+                            content: [{
+                                type: 'text',
+                                text: `<itinerary>
+<destination>{destination}</destination>
+<duration>{num_days} days</duration>
+<travelers>{num_people} {travel_type.lower()} travelers</travelers>
+<dates>{start_date.strftime('%B %d, %Y')} to {end_date.strftime('%B %d, %Y')}</dates>
+<budget>{budget}</budget>
+
+<interests>
+
+Art & Culture: {art}/10
+
+Heritage: {heritage}/10
+
+Spirituality: {spirituality}/10
+
+Nightlife: {nightlife}/10
+
+Adventure: {adventure}/10
+
+Nature: {nature}/10
+</interests>
+
+<day>Day 1: Arrival & Cultural Introduction</day>
+<time>10:00 AM</time>
+<activity>Arrive at {destination}. Transfer to hotel (recommended: Hotel Example for {budget} budget).</activity>
+
+<time>12:00 PM</time>
+<activity>Explore {landmark} (Google Maps: Link). <note>Wear comfortable shoes for cobblestone streets.</note>
+
+<time>2:00 PM</time>
+<restaurant>Lunch at {local restaurant} ($$, known for {signature dish}).</restaurant>
+
+<time>4:00 PM</time>
+<activity>Guided tour of {museum/heritage site} (Book tickets: Link). <note>Priority access for families with infants.</note>
+
+<time>8:00 PM</time>
+<activity>Sunset at {scenic spot} (if {nature} ≥ 7/10). <note>Taxis cost ~₹500; use Uber/Ola.</note>
+
+<day>Day 2: Adventure & Local Flavors</day>
+<time>7:00 AM</time>
+<activity>{Adventure activity} (if {adventure} ≥ 6/10). <note>Age restrictions apply for children.</note>
+
+<time>1:00 PM</time>
+<restaurant>Lunch at {budget-friendly eatery} (try {local specialty}).</restaurant>
+
+<time>3:00 PM</time>
+<activity>Free time for shopping/napping (if {travel_type} == "family").</activity>
+
+<transport>Transport Tips</transport>
+Trains: Book via IRCTC (advance for {num_people}).
+
+Local: Auto-rickshaws (~₹200/km) or metro (Google Maps: Link).
+
+<total_estimate>Estimated cost: ₹{X} per person (excl. flights).</total_estimate>`
+                            }]
+                        }]
+                    })
+                });
+
+                const aiData = await aiResponse.json();
+                currentItinerary = aiData.message;
+
+                await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/db', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer Tlv0OQcRm5facwZp1ZA4pygCFRk1',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        appSlug: 'mera-bharat-yatra',
+                        action: 'create',
+                        table: 'itineraries',
+                        data: {
+                            destination,
+                            duration,
+                            travelers: { adults, children, infants },
+                            startDate,
+                            budgetCategory,
+                            interests,
+                            itinerary: currentItinerary
+                        }
+                    })
+                });
+
+                displayItinerary(currentItinerary);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('itineraryContent').innerHTML = `
+                    <div class="text-red-600 text-center py-4">
+                        <i class="bi bi-exclamation-triangle mr-2"></i>
+                        An error occurred while generating your yatra plan. Please try again.
+                    </div>
+                `;
+            } finally {
+                document.getElementById('loadingSpinner').classList.add('hidden');
+            }
+        });
+
+        function displayItinerary(itinerary) {
+            const content = document.getElementById('itineraryContent');
+            const days = itinerary.split(/Day \d+:/g).filter(day => day.trim());
+            
+            content.innerHTML = days.map((day, index) => `
+                <div class="itinerary-day p-6 bg-white rounded-xl shadow-sm mb-6">
+                    <h3 class="text-2xl font-bold text-[#ff6b6b] mb-4">Day ${index + 1}</h3>
+                    <div class="space-y-4">
+                        ${day.split('\n').map(line => {
+                            if (line.trim() === '') return '';
+                            if (line.includes('http')) {
+                                return `<div class="activity-card p-4 bg-gray-50">
+                                    <p class="text-gray-700 leading-relaxed">${line.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-[#ff6b6b] hover:underline">$1</a>')}</p>
+                                </div>`;
+                            }
+                            return `<p class="text-gray-700 leading-relaxed">${line}</p>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showPlannerForm() {
+            document.getElementById('plannerForm').classList.remove('hidden');
+            document.getElementById('itineraryResult').classList.add('hidden');
+        }
+
+        function customizeItinerary() {
+            const customPrompt = prompt('How would you like to customize your yatra plan?', '');
+            if (customPrompt) {
+                regenerateItinerary(customPrompt);
+            }
+        }
+
+        async function regenerateItinerary(customizations) {
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+            document.getElementById('itineraryContent').innerHTML = '';
+
+            try {
+                const aiResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer Tlv0OQcRm5facwZp1ZA4pygCFRk1',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [{
+                            role: 'user',
+                            content: [{
+                                type: 'text',
+                                text: `Please modify this itinerary with the following changes while maintaining all links and formatting: ${customizations}\n\nOriginal itinerary:\n${currentItinerary}`
+                            }]
+                        }]
+                    })
+                });
+
+                const aiData = await aiResponse.json();
+                currentItinerary = aiData.message;
+                displayItinerary(currentItinerary);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to customize itinerary. Please try again.');
+            } finally {
+                document.getElementById('loadingSpinner').classList.add('hidden');
+            }
+        }
+
+        function saveItinerary() {
+            const element = document.getElementById('itineraryContent');
+            const opt = {
+                margin: 1,
+                filename: 'mera-bharat-yatra-plan.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
